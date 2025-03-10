@@ -106,10 +106,10 @@ namespace Chat_a_Saurus_Rex.Areas.Identity.Pages.Account.Manage
             }
 
             var userName = await _userManager.GetUserNameAsync(user);
-
-            if (_userManager.FindByNameAsync(Input.Username) != null)
+            var newNameCheck = _userManager.FindByNameAsync(Input.Username).Result;
+            if (newNameCheck != null)
             {
-                StatusMessage = "Username already taken";
+                StatusMessage = $"Username {newNameCheck} is already taken";
                 return RedirectToPage();
             }
 
