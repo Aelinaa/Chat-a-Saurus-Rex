@@ -1,4 +1,5 @@
 using Chat_a_Saurus_Rex.Data;
+using Chat_a_Saurus_Rex.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +21,9 @@ namespace Chat_a_Saurus_Rex
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddRazorPages();
+            builder.Services.AddSignalR();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -38,14 +42,14 @@ namespace Chat_a_Saurus_Rex
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
-
+            app.MapHub<ChatHub>("/chatHub");
             app.Run();
         }
     }

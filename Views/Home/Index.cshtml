@@ -1,8 +1,140 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Chat";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@* Pass the logged-in user's name to JavaScript *@
+<script>
+    var currentUser = "@User.Identity.Name";
+</script>
+
+<h2 style="text-align: center;">Say hi!</h2>
+
+<div class="chat-container">
+    <div class="messages" id="messagesList"></div>
+
+    <div class="input-area">
+        <input type="text" id="messageInput" placeholder="Type a message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script>
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chatHub")
+        .build();
+
+    connection.start().catch(err => console.error(err.toString()));
+
+    connection.on("ReceiveMessage", function (user, message) {
+        let chatBubble = document.createElement("div");
+        chatBubble.classList.add("chat-bubble");
+
+        let nameTag = document.createElement("span");
+        nameTag.classList.add("chat-name");
+        nameTag.textContent = user;
+
+        let messageTag = document.createElement("p");
+        messageTag.textContent = message;
+
+        chatBubble.appendChild(nameTag);
+        chatBubble.appendChild(messageTag);
+
+        // Check if the sender is the logged-in user
+        if (user === currentUser) {
+            chatBubble.classList.add("my-message");
+        }
+
+        document.getElementById("messagesList").appendChild(chatBubble);
+        document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight;
+    });
+
+    document.getElementById("messageInput").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Prevents a new line in the input field
+        sendMessage();
+    }
+    });
+
+    function sendMessage() {
+        let message = document.getElementById("messageInput").value;
+        if (message.trim() !== "") {
+            connection.invoke("SendMessage", message).catch(err => console.error(err.toString()));
+            document.getElementById("messageInput").value = "";
+        }
+    }
+</script>
+
+<style>
+    .chat-container {
+        width: 100%;
+        max-width: 800px;
+        margin: auto;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        padding: 10px;
+        background: #f9f9f9;
+    }
+
+    .messages {
+        height: 480px;
+        overflow-y: auto;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .chat-bubble {
+        background: #0078ff;
+        color: white;
+        padding: 10px;
+        border-radius: 15px;
+        max-width: 75%;
+        min-width: 25%;
+        word-wrap: break-word;
+        position: relative;
+        display: inline-block;
+        align-self: flex-start;
+    }
+
+    .chat-name {
+        font-size: 12px;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .input-area {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .input-area input {
+        flex-grow: 1;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    .input-area button {
+        background: #0078ff;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .input-area button:hover {
+        background: #005bbf;
+    }
+
+    /* ✅ Style messages sent by the logged-in user */
+    .my-message {
+        background: #34c759; /* Green for the current user */
+        align-self: flex-end;
+    }
+
+</style>
