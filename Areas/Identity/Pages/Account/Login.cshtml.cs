@@ -126,6 +126,12 @@ namespace Chat_a_Saurus_Rex.Areas.Identity.Pages.Account
 
                 var result = await _signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, lockoutOnFailure: false);
 
+                if (result.IsLockedOut)
+                {
+                    ModelState.AddModelError(string.Empty, "Your account has been banned.");
+                    return Page();
+                }
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");

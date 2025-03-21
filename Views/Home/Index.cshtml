@@ -2,7 +2,6 @@
     ViewData["Title"] = "Chat";
 }
 
-@* Pass the logged-in user's name to JavaScript *@
 <script>
     var currentUser = "@User.Identity.Name";
 </script>
@@ -13,12 +12,14 @@
     <div class="messages" id="messagesList"></div>
 
     <div class="input-area">
-        <input type="text" id="messageInput" placeholder="Type a message..." />
+        <input type="text" id="messageInput" placeholder="Type a message..." maxlength="500"/>
         <button onclick="sendMessage()">Send</button>
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+<script src="js/chat-bubble.js"></script>
+
 <script>
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/chatHub")
@@ -27,33 +28,20 @@
     connection.start().catch(err => console.error(err.toString()));
 
     connection.on("ReceiveMessage", function (user, message) {
-        let chatBubble = document.createElement("div");
-        chatBubble.classList.add("chat-bubble");
-
-        let nameTag = document.createElement("span");
-        nameTag.classList.add("chat-name");
-        nameTag.textContent = user;
-
-        let messageTag = document.createElement("p");
-        messageTag.textContent = message;
-
-        chatBubble.appendChild(nameTag);
-        chatBubble.appendChild(messageTag);
-
-        // Check if the sender is the logged-in user
-        if (user === currentUser) {
-            chatBubble.classList.add("my-message");
-        }
+        let chatBubble = document.createElement("chat-bubble");
+        chatBubble.setAttribute("user", user);
+        chatBubble.setAttribute("message", message);
+        chatBubble.setAttribute("currentUser", user === currentUser ? "true" : "false");
 
         document.getElementById("messagesList").appendChild(chatBubble);
         document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight;
     });
 
     document.getElementById("messageInput").addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-        event.preventDefault(); // Prevents a new line in the input field
-        sendMessage();
-    }
+        if (event.key === "Enter") {
+            event.preventDefault(); // Geen nieuwe regel
+            sendMessage();
+        }
     });
 
     function sendMessage() {
@@ -68,73 +56,58 @@
 <style>
     .chat-container {
         width: 100%;
-        max-width: 800px;
+        max-width: 1000px;
         margin: auto;
         border: 2px solid #ddd;
         border-radius: 10px;
         padding: 10px;
         background: #f9f9f9;
+        /* ✅ Zorg ervoor dat de chat altijd de volledige hoogte benut */
+        display: flex;
+        flex-direction: column;
+        height: 600px; /* Pas de hoogte aan naar wens */
     }
 
     .messages {
-        height: 480px;
+        flex-grow: 1; /* ✅ Laat de berichten-container zoveel mogelijk ruimte gebruiken */
         overflow-y: auto;
         padding: 10px;
         display: flex;
         flex-direction: column;
         gap: 10px;
+        min-height: 450px; /* ✅ Zorg voor een vaste hoogte */
     }
 
-    .chat-bubble {
-        background: #0078ff;
-        color: white;
-        padding: 10px;
-        border-radius: 15px;
-        max-width: 75%;
-        min-width: 25%;
-        word-wrap: break-word;
-        position: relative;
-        display: inline-block;
-        align-self: flex-start;
-    }
-
-    .chat-name {
-        font-size: 12px;
-        font-weight: bold;
-        display: block;
-        margin-bottom: 5px;
-    }
-
+    /* ✅ Input-veld onderin en gecentreerd */
     .input-area {
         display: flex;
         gap: 10px;
         padding: 10px;
+        justify-content: center; /* ✅ Zorg ervoor dat de input en knop gecentreerd staan */
+        align-items: center;
+        background: white;
+        border-top: 2px solid #ddd;
     }
 
-    .input-area input {
-        flex-grow: 1;
-        padding: 8px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
+        .input-area input {
+            flex-grow: 1;
+            max-width: 90%; /* ✅ Beperk de breedte van het invoerveld */
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
 
-    .input-area button {
-        background: #0078ff;
-        color: white;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+        .input-area button {
+            background: #0078ff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    .input-area button:hover {
-        background: #005bbf;
-    }
-
-    /* ✅ Style messages sent by the logged-in user */
-    .my-message {
-        background: #34c759; /* Green for the current user */
-        align-self: flex-end;
-    }
+            .input-area button:hover {
+                background: #005bbf;
+            }
 
 </style>

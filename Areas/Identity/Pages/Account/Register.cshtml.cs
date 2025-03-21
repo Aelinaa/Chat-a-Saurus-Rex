@@ -73,6 +73,7 @@ namespace Chat_a_Saurus_Rex.Areas.Identity.Pages.Account
         {
             [Required]
             [Display(Name = "Username")]
+            [StringLength(15, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
             public string Username { get; set; }
 
             /// <summary>
@@ -82,6 +83,7 @@ namespace Chat_a_Saurus_Rex.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 8)]
             public string Email { get; set; }
 
             /// <summary>
@@ -89,7 +91,7 @@ namespace Chat_a_Saurus_Rex.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 12)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }

@@ -1,0 +1,50 @@
+﻿@model List<Microsoft.AspNetCore.Identity.IdentityUser>
+
+<h2>Admin Panel - Manage Users</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Username</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+                    
+            var isBanned = user.LockoutEnd.HasValue && user.LockoutEnd > DateTime.UtcNow;
+
+            <tr>
+                <td>@user.Email</td>
+                <td>@user.UserName</td>
+                <td>
+                    @if (isBanned)
+                    {
+                        <span class="text-danger">Banned</span>
+                    }
+                    else
+                    {
+                        <span class="text-success">Active</span>
+                    }
+                </td>
+                <td>
+                    <!-- Ban button (disabled if already banned) -->
+                    <form asp-action="BanUser" asp-controller="Admin" method="post" style="display:inline;">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <button type="submit" class="btn btn-danger" @(isBanned ? "disabled" : "")>Ban</button>
+                    </form>
+
+                    <!-- Unban button (disabled if not banned) -->
+                    <form asp-action="UnbanUser" asp-controller="Admin" method="post" style="display:inline;">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <button type="submit" class="btn btn-success" @(!isBanned ? "disabled" : "")>Unban</button>
+                    </form>
+                </td>
+            </tr>
+            }
+        
+    </tbody>
+</table>
