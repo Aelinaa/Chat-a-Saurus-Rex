@@ -24,7 +24,7 @@ namespace Chat_a_Saurus_Rex.Controllers
 
             if (users == null)
             {
-                return View(new List<IdentityUser>()); // Ensures an empty list is sent, not null
+                return View(new List<IdentityUser>()); 
             }
 
             foreach (var user in users)
@@ -48,7 +48,7 @@ namespace Chat_a_Saurus_Rex.Controllers
                 return NotFound();
             }
 
-            user.LockoutEnd = DateTime.UtcNow.AddYears(100); // Lock the account for a long time
+            user.LockoutEnd = DateTime.UtcNow.AddYears(100);
 
             await _userManager.UpdateAsync(user);
 
@@ -64,7 +64,7 @@ namespace Chat_a_Saurus_Rex.Controllers
                 return NotFound();
             }
 
-            user.LockoutEnd = null; // Remove lock
+            user.LockoutEnd = null; 
             await _userManager.UpdateAsync(user);
 
             return RedirectToAction("Index");

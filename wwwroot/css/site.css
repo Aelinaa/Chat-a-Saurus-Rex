@@ -18,5 +18,16 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    /*background: #ffeae9;*/
+}
+.navbar-logo {
+    width: 50px;
+    height: auto;
+    margin-right: 10px;
+    vertical-align: middle; 
+}
+
+.navbar-pink {
+    /*background: #ffeae9 !important;*/
 }

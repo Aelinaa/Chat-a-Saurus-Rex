@@ -7,14 +7,20 @@
             <style>
                 :host {
                     display: block;
-                    width: 100%; /* Zorgt ervoor dat de chatbubbels de volledige breedte gebruiken */
+                    width: 100%;
+                }
+
+                .chat-wrapper {
+                    display: flex;
+                    justify-content: flex-start;
+                    margin-bottom: 8px;
                 }
 
                 .chat-bubble {
-                    background: #0078ff;
+                    background: #FFC0CB;
                     color: white;
                     padding: 10px;
-                    border-radius: 15px;
+                    border-radius: 10px;
                     max-width: 60%;
                     min-width: 25%;
                     word-wrap: break-word;
@@ -28,21 +34,31 @@
                     font-weight: bold;
                     display: block;
                     margin-bottom: 5px;
+                    position: absolute;
+                    top: -10px;
+                    left: 10%; 
+                    transform: translateX(-50%);
+                    background: #FFC0CB;
+                    padding: 5px 10px;
+                    border-radius: 15px; 
+                    font-size: 12px;
+                    color: white;
                 }
 
-                /* ✅ Standaard links uitgelijnd (voor andere gebruikers) */
-                .chat-wrapper {
-                    display: flex;
-                    justify-content: flex-start;
-                }
-
-                /* ✅ Zelf verzonden berichten rechts uitlijnen */
                 .my-message {
-                    background: #34c759;
+                    background: #D3D3D3; 
                 }
 
                 .my-message-wrapper {
                     display: flex;
+                    justify-content: flex-end;
+                }
+
+                .chat-wrapper.left {
+                    justify-content: flex-start;
+                }
+
+                .chat-wrapper.right {
                     justify-content: flex-end;
                 }
             </style>
@@ -64,9 +80,17 @@
         this.shadowRoot.querySelector(".chat-name").textContent = user;
         this.shadowRoot.querySelector(".message-text").textContent = message;
 
+        const chatWrapper = this.shadowRoot.querySelector(".chat-wrapper");
+        const chatBubble = this.shadowRoot.querySelector(".chat-bubble");
+        const chatName = this.shadowRoot.querySelector(".chat-name");
+
         if (isCurrentUser) {
-            this.shadowRoot.querySelector(".chat-bubble").classList.add("my-message");
-            this.shadowRoot.querySelector(".chat-wrapper").classList.add("my-message-wrapper");
+            // Voeg de juiste stijl toe voor eigen producten
+            chatBubble.classList.add("my-message");
+            chatWrapper.classList.add("right");
+            chatName.style.background = "#D3D3D3";
+        } else {
+            chatWrapper.classList.add("left");
         }
     }
 }

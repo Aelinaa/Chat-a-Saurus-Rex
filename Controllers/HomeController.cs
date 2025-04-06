@@ -22,21 +22,12 @@ namespace Chat_a_Saurus_Rex.Controllers
         {
             return View();
         }
-
-        //[Authorize(Roles = "Administrator")]
-        //public IActionResult Admin()
-        //{
-        //    var users = _userManager.Users.ToList();
-
-        //     if (users == null) 
-        //{
-        //    return View(new List<IdentityUser>()); // Ensures an empty list is sent, not null
-        //}
-
-        //return View(users);
-        //}
-
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Lockout()
         {
             return View();
         }

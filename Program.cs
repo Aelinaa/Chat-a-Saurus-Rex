@@ -17,12 +17,24 @@ namespace Chat_a_Saurus_Rex
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+
+                // Customize the password requirements
+                options.Password.RequireDigit = false; 
+                options.Password.RequireLowercase = false; 
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false; 
+                options.Password.RequiredLength = 12; 
+                options.Password.RequiredUniqueChars = 1; 
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddRazorPages();
             builder.Services.AddSignalR();
+
 
             var app = builder.Build();
 
